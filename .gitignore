@@ -1,0 +1,8 @@
+build/
+circuit/FM1216-backups/*
+nbproject/Makefile-genesis.properties
+nbproject/Makefile-local-default.mk
+*.lck
+fp-info-cache
+dist/default/production/*
+!dist/default/production/fm1216me_fm_tuner.production.hex
