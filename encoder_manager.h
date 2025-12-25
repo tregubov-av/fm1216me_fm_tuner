@@ -12,7 +12,7 @@
 // Может быть 2 или 4 в зависимости от используемого энкодера
 #define STEPS_PER_DETENT 2
 
-// Типы и состояния (Направления вращения)
+// Типы и состояния (Направление вращения)
 typedef enum {
     ENCODER_LEFT = 0,
     ENCODER_RIGHT,
@@ -40,9 +40,11 @@ void encoder_manager(void);
 #if ENCODER_GET_EVENT
 encoder_direction_t encoder_get_event(void);
 #endif
+
 #if ENCODER_CLEAR_EVENT
 void encoder_clear_event(void);
 #endif
+
 #if ENCODER_GET_COUNTER
 signed int encoder_get_counter(void);
 #endif

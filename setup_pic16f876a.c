@@ -8,7 +8,7 @@ void setup_pic(void) {
 //    asm("Status     equ 03h");
     /*************************************************************/
     /*CMCON*/ // отключение компараторов
-    CMCON = 0x07; // Режим работа компараторов
+    CMCON = 0x07; // Режим работы компараторов
     /*CCPxCON*/
     CCP1CON = 0x0;            //Отключение модуля CCP1.
     CCP2CON = 0x0;            //Отключение модуля CCP2.
@@ -25,7 +25,7 @@ void setup_pic(void) {
     /*OPTION*/
     OPTION_REG = 0b11000010;
     /*INTCON*/
-    INTCON = 0b01000000; // PEIE = 1 
+    INTCON = 0b01000000; // PEIE = 1
     /*PIE1*/
     PIE1 = 0b00000001; // TMR1IE = 1
     /*RCSTA*/  // Управление модулем USART

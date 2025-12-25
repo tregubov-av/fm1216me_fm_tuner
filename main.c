@@ -29,8 +29,8 @@ void fm_scan_up(void){
         // TODO debug. Перечитать статус и вывести в usart
         fm1216me_read_status(&fm1216me_status);
         debug_print_usart(current_freq_eeprom);
-        // Прервать сканирование
         current_freq_eeprom = current_freq_eeprom + FM_FREQ_TUNING_STEP;
+        // Прервать сканирование
         if(BITTST1(button_flags, BUTTON2_PRESSED)){
             BITCLR(button_flags ,BUTTON2_PRESSED);
             fm1216me_tune_fm(current_freq_eeprom, FM_STEREO, FM_MUTE);
@@ -133,7 +133,7 @@ void __interrupt() isr(void) {
         // Для 1 мс при 20 МГц и предделителе 1:4
         TMR1 = 64286;
         // Обработка энкодера
-        encoder_manager();        
+        encoder_manager();
         // Обработка кнопок
         buttons_process();
     }

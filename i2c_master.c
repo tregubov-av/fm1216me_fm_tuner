@@ -2,7 +2,7 @@
 #include "i2c_master.h"
 
 void i2c_master_init(void) {
-    TSCL = 1;            // Инициализировать SCL 
+    TSCL = 1;            // Инициализировать SCL
     TSDA = 1;            // Инициализировать SDA
     SSPADD = SSPADD_GEN; // Установить частоту
     SSPSTAT = 0x80;      // Управление скоростью нарастания отключено для стандартного режима
@@ -48,6 +48,6 @@ unsigned char i2c_master_read(unsigned char ack) {
     }
     SSPCON2bits.ACKEN = 1;     // Отправить ACK/NACK
     while (SSPCON2bits.ACKEN); // Дождаться завершения
-    
+
     return SSPBUF;
 }

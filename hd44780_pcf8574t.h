@@ -69,29 +69,37 @@ void lcd_senddata(unsigned char data);
 void lcd_sendstring(const char *str);
 void lcd_setcursor(unsigned char row, unsigned char col);
 void lcd_clear(void);
+
 #if LCD_RETHOME
 void lcd_returnhome(void);
 #endif
+
 #if LCD_DISPLAY
 void lcd_displayon(void);
 void lcd_displayoff(void);
 #endif
+
 #if LCD_CURSOR
 void lcd_cursoron(void);
 void lcd_cursoroff(void);
 #endif
+
 #if LCD_BLINK
 void lcd_blinkon(void);
 void lcd_blinkoff(void);
 #endif
+
 #if LCD_BACKLIGHT
 void lcd_backlighton(void);
 void lcd_backlightoff(void);
 #endif
+
 void lcd_sendnibble(unsigned char nibble, unsigned char mode);
+
 #if LCD_PULSEENABLE
 void lcd_pulseenable(unsigned char data);
 #endif
+
 void lcd_showfrequency(unsigned int freq);
 
 #endif /* HD44780_PCF8574T */
