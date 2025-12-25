@@ -282,7 +282,7 @@
 // Макросы для работы в режиме FM
 #define FM_FREQ_LIMIT_L     6590   // 65.90 MHz Минимальная частота в диапазоне
 #define FM_FREQ_LIMIT_H     10800  // 108.00 MHz Максимальная частота в диапазоне
-#define FM_FREQ_TUNING_STEP 10     // Шаг перестройки
+#define FM_FREQ_TUNING_STEP 10     // Шаг перестройки 10 = 100kHz
 #define FM_DEFAULT_FREQ     9280   // Частота по умолчанию
 #define FM_STEREO           1      // 1-Stero, 0-Mono
 #define FM_MUTE             0      // 1-mute, 0-no mute

@@ -59,17 +59,17 @@ void fm1216me_tune_fm(unsigned int f, unsigned char is_stereo, unsigned char is_
 // Чтение статусов
 void fm1216me_read_status(fm1216me_status_t *status){
     unsigned char sb, sr;
-    
+
     i2c_master_start();
     i2c_master_write(FM1216ME_I2C_ADDR|0x1);
     sb = i2c_master_read(I2C_NACK);
     i2c_master_stop();
-    
+
     i2c_master_start();
     i2c_master_write(TDA9887_I2C_ADDR|0x1);
     sr = i2c_master_read(I2C_NACK);
     i2c_master_stop();
-    
+
     /* Заполнение структуры статуса */
     // FM1216ME TUNER
     status->pll_lock     = (sb & 0x40) ? 1 : 0;     /* FL бит (бит 6) */
@@ -81,7 +81,7 @@ void fm1216me_read_status(fm1216me_status_t *status){
     status->signal_fm    = (sr & 0x20) ? 1 : 0;     /* FMIFL бит (бит 5) */
     status->signal_video = (sr & 0x40) ? 1 : 0;     /* VIFL бит (бит 6) */
     status->afc_win      = (sr & 0x80) ? 1 : 0;     /* AFCWIN бит (бит 7) */
-    
+
     /* Извлечение битов AFC: D4 D3 D2 D1 (биты 4,3,2,1) */
     unsigned char afc_bits = (sr >> 1) & 0x0F; /* Сдвигаем вправо на 1, берем 4 бита */
 
@@ -96,7 +96,7 @@ void fm1216me_read_status(fm1216me_status_t *status){
         case 0x02: /* 0010 */ status->afc_offset = -63; break;  /* -62.5 kHz */
         case 0x01: /* 0001 */ status->afc_offset = -38; break;  /* -37.5 kHz */
         case 0x00: /* 0000 */ status->afc_offset = -13; break;  /* -12.5 kHz */
-        
+
         /* Положительные смещения (F_VIF > F0) */
         case 0x0F: /* 1111 */ status->afc_offset = 13; break;   /* +12.5 kHz */
         case 0x0E: /* 1110 */ status->afc_offset = 38; break;   /* +37.5 kHz */

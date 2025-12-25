@@ -208,7 +208,7 @@ void lcd_backlightoff(void) {
 // Вывод частоты
 void lcd_showfrequency(unsigned int freq) {
     char buffer[8];
-    
+
     // Для 5-значных чисел
     if (freq >= 10000) {
         // 12345 -> 123.45
@@ -257,6 +257,6 @@ void lcd_showfrequency(unsigned int freq) {
         buffer[3] = freq % 10 + '0';                // 1
         buffer[4] = '\0';
     }
-    
+
     lcd_sendstring(buffer);
 }

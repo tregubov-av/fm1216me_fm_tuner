@@ -1,7 +1,7 @@
 #include <xc.h>
 #include "encoder_manager.h"
 
-// Переменные для отслеживания состояния. 
+// Переменные для отслеживания состояния.
 // Общий счетчик, который увеличивается/уменьшается при каждом действительном
 // шаге (переходе) энкодера.
 volatile signed int encoder_raw_counter = 0;
@@ -37,7 +37,7 @@ static const signed char transition_table[16] = {
 void encoder_init(void) {
     // Настройка портов на вход
     ENCODER_A_TRIS = 1;
-    ENCODER_B_TRIS = 1;    
+    ENCODER_B_TRIS = 1;
     // Чтение начального состояния
     encoder_last_state = (ENCODER_A_PORT << 1) | ENCODER_B_PORT;
 }
@@ -61,7 +61,7 @@ void encoder_manager(void) {
             // Движение по часовой стрелке, увеличиваем общий счетчик
             encoder_raw_counter += direction;
             // Проверяем достижение детента
-            // Вычисляем разницу (diff) между общим количеством шагов (raw_counter) 
+            // Вычисляем разницу (diff) между общим количеством шагов (raw_counter)
             // и последним зарегистрированным щелчком (last_detent).
             // Показывает, сколько шагов было сделано с последнего щелчка.
             signed char diff = (signed char)(encoder_raw_counter - encoder_last_detent);
@@ -80,7 +80,6 @@ void encoder_manager(void) {
                 encoder_last_detent = encoder_raw_counter;
             }
         }
-        
         // Обновляем состояние
         encoder_last_state = current_state;
     } else {
