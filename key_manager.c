@@ -1,16 +1,36 @@
+// MIT License
+//
+// Copyright (c) 2025 Andrey Tregubov
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include <xc.h>
 #include "key_manager.h"
 
-// Глобальные переменные
 // Флаги состояний кнопок
 volatile unsigned char button_flags = 0;
 // Статические переменные для отслеживания состояний
 static unsigned char button1_counter = 0;
-static unsigned char button2_counter = 0;
 
 // Обработка кнопок (вызывается по прерыванию таймера каждую 1 мс)
 void buttons_process(void) {
-    // Обработка кнопки 1 (RC2)
+    // Обработка кнопки 1 (RC5)
     if (!BUTTON1) {  // Кнопка нажата (активный низкий уровень)
         if (button1_counter < 0xFF) {
             button1_counter++;
@@ -22,19 +42,5 @@ void buttons_process(void) {
         }
     } else {  // Кнопка отпущена
         button1_counter = 0;
-    }
-
-    // Обработка кнопки 2 (RC5)
-    if (!BUTTON2) {  // Кнопка нажата (активный низкий уровень)
-        if (button2_counter < 0xFF) {
-            button2_counter++;
-        }
-        // Проверка на дребезг
-        if (button2_counter == DEBOUNCE_TIME) {
-            // Кнопка уверенно нажата
-            BITSET(button_flags, BUTTON2_PRESSED);
-        }
-    } else {  // Кнопка отпущена
-        button2_counter = 0;
     }
 }

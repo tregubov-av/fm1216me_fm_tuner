@@ -1,3 +1,25 @@
+// MIT License
+//
+// Copyright (c) 2025 Andrey Tregubov
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include <xc.h>
 #include "encoder_manager.h"
 
@@ -39,12 +61,12 @@ void encoder_init(void) {
     ENCODER_A_TRIS = 1;
     ENCODER_B_TRIS = 1;
     // Чтение начального состояния
-    encoder_last_state = (ENCODER_A_PORT << 1) | ENCODER_B_PORT;
+    encoder_last_state = (unsigned char)((ENCODER_A_PORT << 1) | ENCODER_B_PORT);
 }
 
 void encoder_manager(void) {
     // Считываем текущее состояние энкодера.
-    unsigned char current_state = (ENCODER_A_PORT << 1) | ENCODER_B_PORT;
+    unsigned char current_state = (unsigned char)((ENCODER_A_PORT << 1) | ENCODER_B_PORT);
     // Проверяем, произошло ли изменение состояния.
     if (current_state != encoder_last_state) {
         // Формируем 4-битный код перехода (transition).
@@ -52,9 +74,9 @@ void encoder_manager(void) {
         // Биты 3 и 2: Предыдущее состояние (last_state)
         // Биты 1 и 0: Текущее состояние (current_state)
         // Например, переход из 00 в 01 даст transition = 0b0001
-        unsigned char transition = (encoder_last_state << 2) | current_state;
+        unsigned char transition = (unsigned char)((encoder_last_state << 2) | current_state);
         // Используем таблицу переходов для определения направления
-        signed char direction = transition_table[transition];
+        signed char direction = transition_table[(unsigned char)transition];
         // Если переход валидный
         if (direction != 0) {
             // Движение против часовой стрелки, уменьшаем общий счетчик

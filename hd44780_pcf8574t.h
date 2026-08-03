@@ -1,5 +1,30 @@
+// MIT License
+//
+// Copyright (c) 2025 Andrey Tregubov
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #ifndef HD44780_PCF8574T
 #define HD44780_PCF8574T
+
+#include <xc.h>
+#include "setup_pic16f876a.h"
 
 // Адрес PCF8574T (зависит от адресных контактов A0-A2)
 #define PCF8574T_ADDR 0x4E  // 0x27 << 1 (бит R/W всегда 0 для записи)
@@ -52,6 +77,21 @@
 #define LCD_5x10DOTS  0x04
 #define LCD_5x8DOTS   0x00
 
+// Отправка одного полубайта (nibble) с указанием режима (0=команда, 1=данные)
+#define LCD_SEND_NIBBLE(nibble, mode) do { \
+    unsigned char _data = (unsigned char)(((nibble) & 0xF0) | ((mode) ? LCD_RS : 0) | LCD_BL); \
+    i2c_master_start(); \
+    i2c_master_write(PCF8574T_ADDR); \
+    i2c_master_write((unsigned char)(_data | LCD_E)); \
+    i2c_master_stop(); \
+    __delay_us(1); \
+    i2c_master_start(); \
+    i2c_master_write(PCF8574T_ADDR); \
+    i2c_master_write((unsigned char)(_data & ~LCD_E)); \
+    i2c_master_stop(); \
+    __delay_us(50); \
+} while(0)
+
 // Управление функциями
 // 1 - Enable
 // 0 - Disable
@@ -65,7 +105,6 @@
 // Прототипы функций
 void lcd_init(void);
 void lcd_sendcommand(unsigned char cmd);
-void lcd_senddata(unsigned char data);
 void lcd_sendstring(const char *str);
 void lcd_setcursor(unsigned char row, unsigned char col);
 void lcd_clear(void);
@@ -94,12 +133,8 @@ void lcd_backlighton(void);
 void lcd_backlightoff(void);
 #endif
 
-void lcd_sendnibble(unsigned char nibble, unsigned char mode);
-
 #if LCD_PULSEENABLE
 void lcd_pulseenable(unsigned char data);
 #endif
-
-void lcd_showfrequency(unsigned int freq);
 
 #endif /* HD44780_PCF8574T */

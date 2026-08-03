@@ -13,6 +13,7 @@
       <itemPath>encoder_manager.h</itemPath>
       <itemPath>key_manager.h</itemPath>
       <itemPath>hd44780_pcf8574t.h</itemPath>
+      <itemPath>keypad.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -28,13 +29,14 @@
                    projectFiles="true">
       <itemPath>setup_pic16f876a.c</itemPath>
       <itemPath>main.c</itemPath>
-      <itemPath>i2c_master.c</itemPath>
       <itemPath>usart.c</itemPath>
       <itemPath>fm1216me.c</itemPath>
       <itemPath>usart_debug_board.c</itemPath>
       <itemPath>encoder_manager.c</itemPath>
       <itemPath>key_manager.c</itemPath>
       <itemPath>hd44780_pcf8574t.c</itemPath>
+      <itemPath>keypad.c</itemPath>
+      <itemPath>i2c_master.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -48,7 +50,7 @@
         <platformTool>Simulator</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>1.45</languageToolchainVersion>
-        <platform>2</platform>
+        <platform>3</platform>
       </toolsSet>
       <packs>
         <pack name="PIC16Fxxx_DFP" vendor="Microchip" version="1.7.162"/>
@@ -112,7 +114,7 @@
         <property key="use-iar" value="false"/>
         <property key="verbose" value="false"/>
         <property key="warning-level" value="-3"/>
-        <property key="what-to-do" value="ignore"/>
+        <property key="what-to-do" value="require"/>
       </HI-TECH-COMP>
       <HI-TECH-LINK>
         <property key="additional-options-checksum" value=""/>

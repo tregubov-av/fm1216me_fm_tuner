@@ -1,35 +1,29 @@
+// MIT License
+//
+// Copyright (c) 2025 Andrey Tregubov
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include <xc.h>
 #include "hd44780_pcf8574t.h"
 #include "i2c_master.h"
 #include "setup_pic16f876a.h"
-
-// Отправка nibble на LCD
-void lcd_sendnibble(unsigned char nibble, unsigned char mode) {
-    unsigned char data = nibble & 0xF0;  // Берем старший nibble
-
-    if (mode == 1)  // Если передача данных
-        data |= LCD_RS;
-
-    data |= LCD_BL;  // Включить подсветку
-    data |= LCD_E;   // Установить Enable
-
-    // Запись по I2C
-    i2c_master_start();
-    i2c_master_write(PCF8574T_ADDR);
-    i2c_master_write(data);
-    i2c_master_stop();
-
-    __delay_us(1);  // Пауза для импульса
-
-    data &= ~LCD_E;  // Сбросить Enable
-
-    i2c_master_start();
-    i2c_master_write(PCF8574T_ADDR);
-    i2c_master_write(data);
-    i2c_master_stop();
-
-    __delay_us(50);  // Пауза между командами
-}
 
 #if LCD_PULSEENABLE
 // Импульс на выводе Enable
@@ -37,7 +31,7 @@ void lcd_pulseenable(unsigned char data) {
     data |= LCD_E;
     i2c_master_start();
     i2c_master_write(PCF8574T_ADDR);
-    i2c_master_write(data);
+    i2c_master_write((unsigned char)data);
     i2c_master_stop();
 
     __delay_us(1);
@@ -45,26 +39,41 @@ void lcd_pulseenable(unsigned char data) {
     data &= ~LCD_E;
     i2c_master_start();
     i2c_master_write(PCF8574T_ADDR);
-    i2c_master_write(data);
+    i2c_master_write((unsigned char)data);
     i2c_master_stop();
 
     __delay_us(50);
 }
 #endif
 
+// Отправка команды на LCD
+void lcd_sendcommand(unsigned char cmd) {
+    unsigned char high_nibble = (unsigned char)(cmd & 0xF0);
+    unsigned char low_nibble = (unsigned char)((cmd << 4) & 0xF0);
+
+    // Отправить старший nibble
+    LCD_SEND_NIBBLE(high_nibble, 0);
+
+    // Отправить младший nibble
+    LCD_SEND_NIBBLE(low_nibble, 0);
+
+    if (cmd == LCD_CLEARDISPLAY || cmd == LCD_RETURNHOME)
+        __delay_ms(2);  // Длительные команды
+}
+
 // Инициализация LCD
 void lcd_init(void) {
     __delay_ms(50);  // Ожидание стабилизации питания
     // Последовательность инициализации 4-битного режима
-    lcd_sendnibble(0x30, 0);
+    LCD_SEND_NIBBLE(0x30, 0);
     __delay_ms(5);
-    lcd_sendnibble(0x30, 0);
+    LCD_SEND_NIBBLE(0x30, 0);
     __delay_us(150);
-    lcd_sendnibble(0x30, 0);
+    LCD_SEND_NIBBLE(0x30, 0);
     __delay_us(150);
 
     // Переключение в 4-битный режим
-    lcd_sendnibble(0x20, 0);
+    LCD_SEND_NIBBLE(0x20, 0);
     __delay_us(150);
 
     // Настройка: 2 строки, 5x8 точек
@@ -84,37 +93,20 @@ void lcd_init(void) {
     lcd_sendcommand(LCD_DISPLAYCONTROL | LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF);
 }
 
-// Отправка команды на LCD
-void lcd_sendcommand(unsigned char cmd) {
-    unsigned char high_nibble = cmd & 0xF0;
-    unsigned char low_nibble = (cmd << 4) & 0xF0;
-
-    // Отправить старший nibble
-    lcd_sendnibble(high_nibble, 0);
-
-    // Отправить младший nibble
-    lcd_sendnibble(low_nibble, 0);
-
-    if (cmd == LCD_CLEARDISPLAY || cmd == LCD_RETURNHOME)
-        __delay_ms(2);  // Длительные команды
-}
-
-// Отправка данных на LCD
-void lcd_senddata(unsigned char data) {
-    unsigned char high_nibble = data & 0xF0;
-    unsigned char low_nibble = (data << 4) & 0xF0;
-
-    // Отправить старший nibble
-    lcd_sendnibble(high_nibble, 1);
-
-    // Отправить младший nibble
-    lcd_sendnibble(low_nibble, 1);
-}
-
 // Отправка строки
 void lcd_sendstring(const char *str) {
+    unsigned char data;
     while (*str) {
-        lcd_senddata(*str++);
+    // Отправка данных на LCD
+        data = *str++;
+        unsigned char high_nibble = (unsigned char)(data & 0xF0);
+        unsigned char low_nibble = (unsigned char)((data << 4) & 0xF0);
+
+        // Отправить старший nibble
+        LCD_SEND_NIBBLE(high_nibble, 1);
+
+        // Отправить младший nibble
+        LCD_SEND_NIBBLE(low_nibble, 1);    
     }
 }
 
@@ -124,13 +116,13 @@ void lcd_setcursor(unsigned char row, unsigned char col) {
 
     switch (row) {
         case 0:
-            address = 0x00 + col;
+            address = (unsigned char)(0x00 + col);
             break;
         case 1:
-            address = 0x40 + col;
+            address = (unsigned char)(0x40 + col);
             break;
         default:
-            address = 0x00 + col;
+            address = (unsigned char)(0x00 + col);
     }
 
     lcd_sendcommand(LCD_SETDDRAMADDR | address);
@@ -204,59 +196,3 @@ void lcd_backlightoff(void) {
     i2c_master_stop();
 }
 #endif
-
-// Вывод частоты
-void lcd_showfrequency(unsigned int freq) {
-    char buffer[8];
-
-    // Для 5-значных чисел
-    if (freq >= 10000) {
-        // 12345 -> 123.45
-        buffer[0] = (freq / 10000) % 10 + '0';       // 1
-        buffer[1] = (freq / 1000) % 10 + '0';        // 2
-        buffer[2] = (freq / 100) % 10 + '0';         // 3
-        buffer[3] = '.';                            // .
-        buffer[4] = (freq / 10) % 10 + '0';         // 4
-        buffer[5] = freq % 10 + '0';                // 5
-        buffer[6] = '\0';
-    }
-    // Для 4-значных чисел
-    else if (freq >= 1000) {
-        // 1234 -> 12.34
-        buffer[0] = (freq / 1000) % 10 + '0';        // 1
-        buffer[1] = (freq / 100) % 10 + '0';         // 2
-        buffer[2] = '.';                            // .
-        buffer[3] = (freq / 10) % 10 + '0';         // 3
-        buffer[4] = freq % 10 + '0';                // 4
-        buffer[5] = '\0';
-    }
-    // Для 3-значных чисел
-    else if (freq >= 100) {
-        // 123 -> 1.23
-        buffer[0] = (freq / 100) % 10 + '0';         // 1
-        buffer[1] = '.';                            // .
-        buffer[2] = (freq / 10) % 10 + '0';         // 2
-        buffer[3] = freq % 10 + '0';                // 3
-        buffer[4] = '\0';
-    }
-    // Для 2-значных чисел
-    else if (freq >= 10) {
-        // 12 -> 0.12
-        buffer[0] = '0';
-        buffer[1] = '.';
-        buffer[2] = (freq / 10) % 10 + '0';         // 1
-        buffer[3] = freq % 10 + '0';                // 2
-        buffer[4] = '\0';
-    }
-    // Для 1-значных чисел
-    else {
-        // 1 -> 0.01
-        buffer[0] = '0';
-        buffer[1] = '.';
-        buffer[2] = '0';
-        buffer[3] = freq % 10 + '0';                // 1
-        buffer[4] = '\0';
-    }
-
-    lcd_sendstring(buffer);
-}

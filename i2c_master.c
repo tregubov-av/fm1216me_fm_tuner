@@ -1,3 +1,25 @@
+// MIT License
+//
+// Copyright (c) 2025 Andrey Tregubov
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include <xc.h>
 #include "i2c_master.h"
 
@@ -9,34 +31,29 @@ void i2c_master_init(void) {
     SSPCON = 0x28;       // Включите SSP и выбрать режим I2C Master.
 }
 
-void i2c_master_wait(void) {
-    // Ожидание завершения текущей операции I2C
-    while ((SSPSTAT & 0x04) || (SSPCON2 & 0x1F)); // Проверка битов BF, UA, SSPEN, CKP, RN_W, ...
-}
-
 void i2c_master_start(void) {
-    i2c_master_wait();
+    I2C_MASTER_WAIT();
     SSPCON2bits.SEN = 1;     // Инициировать условие запуска
     while (SSPCON2bits.SEN); // Дождаться завершения запуска
     PIR1bits.SSPIF = 0;      // Сбросить флаг прерывания
 }
 
 void i2c_master_stop(void) {
-    i2c_master_wait();
+    I2C_MASTER_WAIT();
     SSPCON2bits.PEN = 1;     // Инициировать условие остановки
     while (SSPCON2bits.PEN); // Дождаться завершения остановки
     PIR1bits.SSPIF = 0;      // Сбросить флаг прерывания
 }
 
 void i2c_master_write(unsigned char data) {
-    i2c_master_wait();
+    I2C_MASTER_WAIT();
     SSPBUF = data;           // Загрузка данных в буфер
     while (!PIR1bits.SSPIF); // Дождаться завершения передачи
     PIR1bits.SSPIF = 0;      // Сбросить флаг прерывания
 }
 
 unsigned char i2c_master_read(unsigned char ack) {
-    i2c_master_wait();
+    I2C_MASTER_WAIT();
     SSPCON2bits.RCEN = 1;    // Включить режим приема
     while (!PIR1bits.SSPIF); // Дождаться окончания приема
     PIR1bits.SSPIF = 0;      // Очистить флаг

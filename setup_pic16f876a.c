@@ -1,12 +1,29 @@
+// MIT License
+//
+// Copyright (c) 2025 Andrey Tregubov
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include <xc.h>
 #include "setup_pic16f876a.h"
 
 void setup_pic(void) {
-//    /* Регистры для сохранения контекста при обработки прерываний*/
-//    asm("W_Temp     equ 7Fh");
-//    asm("Stat_Temp  equ 20h");
-//    asm("Status     equ 03h");
-    /*************************************************************/
     /*CMCON*/ // отключение компараторов
     CMCON = 0x07; // Режим работы компараторов
     /*CCPxCON*/
@@ -23,7 +40,7 @@ void setup_pic(void) {
     PORTB = 0; // очищаем порт Б
     PORTC = 0; // очищаем порт С
     /*OPTION*/
-    OPTION_REG = 0b11000010;
+    OPTION_REG = 0b01000010;
     /*INTCON*/
     INTCON = 0b01000000; // PEIE = 1
     /*PIE1*/
