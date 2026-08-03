@@ -1,3 +1,25 @@
+// MIT License
+//
+// Copyright (c) 2025 Andrey Tregubov
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include <xc.h>
 #include "fm1216me.h"
 #include "i2c_master.h"
@@ -72,18 +94,18 @@ void fm1216me_read_status(fm1216me_status_t *status){
 
     /* Заполнение структуры статуса */
     // FM1216ME TUNER
-    status->pll_lock     = (sb & 0x40) ? 1 : 0;     /* FL бит (бит 6) */
-    status->power_reset  = (sb & 0x80) ? 1 : 0;     /* POR бит (бит 7) */
-    status->agc_active   = (sb & 0x08) ? 1 : 0;     /* AGC бит (бит 3) */
+    status->pll_lock     = (unsigned char)((sb & 0x40) ? 1 : 0);     /* FL бит (бит 6) */
+    status->power_reset  = (unsigned char)((sb & 0x80) ? 1 : 0);     /* POR бит (бит 7) */
+    status->agc_active   = (unsigned char)((sb & 0x08) ? 1 : 0);     /* AGC бит (бит 3) */
     /* Стерео: A2=1, A1=0, A0=0 (биты 2,1,0) */
-    status->stereo       = ((sb & 0x04) && !(sb & 0x03)) ? 1 : 0;
+    status->stereo       = (unsigned char)(((sb & 0x04) && !(sb & 0x03)) ? 1 : 0);
     // TDA9887 IF
-    status->signal_fm    = (sr & 0x20) ? 1 : 0;     /* FMIFL бит (бит 5) */
-    status->signal_video = (sr & 0x40) ? 1 : 0;     /* VIFL бит (бит 6) */
-    status->afc_win      = (sr & 0x80) ? 1 : 0;     /* AFCWIN бит (бит 7) */
+    status->signal_fm    = (unsigned char)((sr & 0x20) ? 1 : 0);     /* FMIFL бит (бит 5) */
+    status->signal_video = (unsigned char)((sr & 0x40) ? 1 : 0);     /* VIFL бит (бит 6) */
+    status->afc_win      = (unsigned char)((sr & 0x80) ? 1 : 0);     /* AFCWIN бит (бит 7) */
 
     /* Извлечение битов AFC: D4 D3 D2 D1 (биты 4,3,2,1) */
-    unsigned char afc_bits = (sr >> 1) & 0x0F; /* Сдвигаем вправо на 1, берем 4 бита */
+    unsigned char afc_bits = (unsigned char)((sr >> 1) & 0x0F); /* Сдвигаем вправо на 1, берем 4 бита */
 
     /* Расшифровка AFC смещения */
     switch(afc_bits) {

@@ -1,3 +1,25 @@
+// MIT License
+//
+// Copyright (c) 2025 Andrey Tregubov
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #ifndef _FM1216ME_H_
 #define _FM1216ME_H_
 /*************** МАКРОСЫ ДЛЯ РЕГИСТРОВ ТЮНЕРНОЙ ЧАСТИ FM1216ME*****************/
@@ -11,20 +33,21 @@
 #define IF_TV_LPRIME 3395   // 33.95 МГц = 33950 кГц = 3395 единиц
 
 // Константы шагов PLL (умножены на 1000 для точности)
-#define STEP_50_X1000      50000   // 50 кГц * 1000 = 50000
-#define STEP_31_25_X1000   31250   // 31.25 кГц * 1000 = 31250
-#define STEP_62_5_X1000    62500   // 62.5 кГц * 1000 = 62500
-#define STEP_166_7_X1000   166700  // 166.7 кГц * 1000 = 166700
+#define STEP_50_X1000      50000UL   // 50 кГц * 1000 = 50000
+#define STEP_31_25_X1000   31250UL   // 31.25 кГц * 1000 = 31250
+#define STEP_62_5_X1000    62500UL   // 62.5 кГц * 1000 = 62500
+#define STEP_166_7_X1000   166700UL  // 166.7 кГц * 1000 = 166700
 
 /* =================== МАКРОСЫ ДЛЯ РАСЧЕТА ЧАСТОТ DB1-DB2 =================== */
 // Рассчитывает N = (F_RF + F_IF) / F_step
 // Универсальный для расчета любых параметров
 #define FM1216ME_CALC_N_SCALED(f, if_const, step_x1000) \
-    ((unsigned int)(((unsigned long)(f) * 1000 + (unsigned int)(if_const) * 1000) / (unsigned long)(step_x1000)))
+    ((unsigned int)(((unsigned long)(f) * 1000UL + (unsigned long)(if_const) * 1000UL) / (unsigned long)(step_x1000)))
 
 // Разделение N на старший и младший байты
 #define FM1216ME_DIV_HIGH_FROM_N(n) ((unsigned int)((n) >> 8))
-#define FM1216ME_DIV_LOW_FROM_N(n)  ((unsigned int)((n) & 0xFF))
+// TODO fm1216me.c:32: warning: (751) arithmetic overflow in constant expression (возможно баг компилятора)
+#define FM1216ME_DIV_LOW_FROM_N(n)  ((unsigned int)((n) & 0xFFU))
 
 /* ---- FM РАДИО (10.7 МГц) ---- */
 // Шаг 50 кГц (RSA=0, RSB=0) 
@@ -297,7 +320,7 @@ typedef struct {
     unsigned char signal_fm   : 1;    /* Уровень FM ПЧ высокий */
     unsigned char signal_video: 1;    /* Уровень видео ПЧ высокий */
     unsigned char afc_win     : 1;    /* AFC в окне (±12.5 кГц) */
-    signed char   afc_offset;         /* Смещение AFC в кГц (-187...+187) */
+    signed int    afc_offset;         /* Смещение AFC в кГц (-187...+187) */
 } fm1216me_status_t;
 
 // Статус тюнера

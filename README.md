@@ -1,7 +1,7 @@
-![ANsible](https://img.shields.io/badge/MPLAB%20X%20IDE-v6.20-brightgreen) ![XC8](https://img.shields.io/badge/XC8-v1.45-red) ![KiCAD](https://img.shields.io/badge/KiCAD-v9.0-blue)
+![MplabXIDE](https://img.shields.io/badge/MPLAB%20X%20IDE-v6.20-brightgreen) ![XC8](https://img.shields.io/badge/XC8-v1.45-red) ![KiCAD](https://img.shields.io/badge/KiCAD-v9.0-blue)
 
 # FM радиоприемник на FM1216ME
-*Проект создан исключительно в академических целях.*
+*Проект создан в академических целях.*
 
 ## Технические характеристики
 * Частотный диапазон: 65.90 - 108.00 MHz
@@ -10,8 +10,16 @@
 
 ## Органы управления
 * Энкодер SW1: Вращение энкодера изменяет частоту радиоприемника
-* Нажатие кнопки энкодера SW1: Запуск сканирования FM диапазона
-* Нажание кнопки SW2: Перечитать информационные биты FM1216ME и вывести в USART
+* Нажатие кнопки энкодера SW1: Перечитать информационные биты FM1216ME и вывести в USART
+* Назначение кнопок на клавиатуре:
+
+```
+{ '1'    '2'     '3'     'SCAN UP' }
+{ '4'    '5'     '6'    'SCAN DOWN'}
+{ '7'    '8'     '9'     'NOT USE' }
+{'ESC'   '0'   'ENTER'   'NOT USE' }
+```
+
 
 ## Основные компоненты
 * FM1216ME/IH-5
