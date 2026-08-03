@@ -9615,6 +9615,16 @@
 	)
 	(wire
 		(pts
+			(xy 251.46 59.69) (xy 251.46 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c7c01de0-d0ed-4353-991e-360be51a7ddc")
+	)
+	(wire
+		(pts
 			(xy 220.98 142.24) (xy 226.06 142.24)
 		)
 		(stroke
@@ -17244,6 +17254,73 @@
 			(project ""
 				(path "/65cde581-a21d-47f8-a0b3-e48af637757e"
 					(reference "C3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDD")
+		(at 251.46 60.96 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f310cbfa-0772-4456-9c1a-d17599caa90e")
+		(property "Reference" "#PWR03"
+			(at 251.46 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 251.46 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 251.46 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 251.46 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDD\" , digital ground"
+			(at 251.46 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1efe31e3-4908-4ba1-98b1-c482f59d2d1e")
+		)
+		(instances
+			(project "FM1216"
+				(path "/65cde581-a21d-47f8-a0b3-e48af637757e"
+					(reference "#PWR03")
 					(unit 1)
 				)
 			)
